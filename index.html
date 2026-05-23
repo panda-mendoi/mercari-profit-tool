@@ -481,8 +481,18 @@
       available.sort((a, b) => (a.fee + a.package) - (b.fee + b.package));
 
       const displayMethods = available.slice(0, 5);
+      const best = available[0];
+      const bestTotal = best.fee + best.package;
 
       let text = '';
+
+      text += `最安候補：${best.name} 合計${formatYen(bestTotal)}\n`;
+
+      const bestPackageText = best.package > 0
+        ? `送料${formatYen(best.fee)} + 資材${formatYen(best.package)}`
+        : `送料${formatYen(best.fee)}`;
+
+      text += `内訳：${bestPackageText}\n\n`;
 
       if (isNaN(weight)) {
         text += '※重さ未入力のため、サイズ条件のみで判定しています。\n\n';
@@ -496,9 +506,6 @@
         const packageText = method.package > 0 ? `送料${formatYen(method.fee)} + 資材${formatYen(method.package)}` : `送料${formatYen(method.fee)}`;
         text += `${index + 1}. ${method.name}：合計${formatYen(total)}（${packageText} / 重さ上限 ${weightText}）\n`;
       });
-
-      const best = available[0];
-      text += `\n最安候補：${best.name} 合計${formatYen(best.fee + best.package)}`;
 
       if (available.length > 5) {
         text += `\n※該当数が多いため、安い順に5件まで表示しています。`;
