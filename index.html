@@ -299,7 +299,25 @@
     }
 
     function formatYen(value) {
-      return `¥${Number(value).toLocaleString()}`;
+      return `${Number(value).toLocaleString()}円`;
+    }
+
+    function formatMethodLabel(method) {
+      const total = method.fee + method.package;
+
+      if (method.package > 0) {
+        return `${method.name}：${formatYen(total)}（送料${formatYen(method.fee)}＋資材${formatYen(method.package)}）`;
+      }
+
+      return `${method.name}：${formatYen(total)}`;
+    }
+
+    function formatMethodDetail(method) {
+      if (method.package > 0) {
+        return `送料${formatYen(method.fee)}＋資材${formatYen(method.package)}`;
+      }
+
+      return `送料${formatYen(method.fee)}`;
     }
 
     function updateShippingMethods(categoryId, methodId, methodBoxId, manualBoxId) {
@@ -327,8 +345,7 @@
       shippingData[category].forEach((method, index) => {
         const option = document.createElement('option');
         option.value = index;
-        const total = method.fee + method.package;
-        option.textContent = `${method.name}（送料${formatYen(method.fee)}${method.package > 0 ? `＋資材${formatYen(method.package)}` : ''} / 合計${formatYen(total)}）`;
+        option.textContent = formatMethodLabel(method);
         methodSelect.appendChild(option);
       });
 
@@ -406,7 +423,7 @@
         `販売手数料：${formatYen(fee)}\n` +
         `送料：${formatYen(selected.shippingFee)}\n` +
         `資材代：${formatYen(selected.packageCost)}\n` +
-        `送料・資材代 合計：${formatYen(totalShippingCost)}\n` +
+        `送料・資材代：${formatYen(totalShippingCost)}\n` +
         `手元に残る金額：${formatYen(actualProfit)}` +
         marginText;
     }
@@ -445,7 +462,7 @@
         `販売手数料：${formatYen(fee)}\n` +
         `送料：${formatYen(selected.shippingFee)}\n` +
         `資材代：${formatYen(selected.packageCost)}\n` +
-        `送料・資材代 合計：${formatYen(totalShippingCost)}\n` +
+        `送料・資材代：${formatYen(totalShippingCost)}\n` +
         `手元に残る金額：${formatYen(profit)}` +
         marginText;
     }
@@ -482,17 +499,10 @@
 
       const displayMethods = available.slice(0, 5);
       const best = available[0];
-      const bestTotal = best.fee + best.package;
 
       let text = '';
 
-      text += `最安候補：${best.name} 合計${formatYen(bestTotal)}\n`;
-
-      const bestPackageText = best.package > 0
-        ? `送料${formatYen(best.fee)} + 資材${formatYen(best.package)}`
-        : `送料${formatYen(best.fee)}`;
-
-      text += `内訳：${bestPackageText}\n\n`;
+      text += `最安候補：${formatMethodLabel(best)}\n\n`;
 
       if (isNaN(weight)) {
         text += '※重さ未入力のため、サイズ条件のみで判定しています。\n\n';
@@ -501,10 +511,8 @@
       text += '使える可能性がある発送方法（安い順・最大5件）\n';
 
       displayMethods.forEach((method, index) => {
-        const total = method.fee + method.package;
         const weightText = method.weight === Infinity ? '指定なし' : method.weight >= 1000 ? `${method.weight / 1000}kg` : `${method.weight}g`;
-        const packageText = method.package > 0 ? `送料${formatYen(method.fee)} + 資材${formatYen(method.package)}` : `送料${formatYen(method.fee)}`;
-        text += `${index + 1}. ${method.name}：合計${formatYen(total)}（${packageText} / 重さ上限 ${weightText}）\n`;
+        text += `${index + 1}. ${formatMethodLabel(method)} / 重さ上限 ${weightText}\n`;
       });
 
       if (available.length > 5) {
