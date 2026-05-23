@@ -229,6 +229,7 @@
           <button type="button" class="reset-button" onclick="resetJudgeCalc()">リセット</button>
           <div id="cheapest-result" class="result"></div>
 
+          <p class="note">※該当する発送方法が複数ある場合は、安い順に最大5件まで表示します。</p>
           <p class="note">※ポスト投函可否、専用資材の有無、地域制限などは自動判定できません。発送前に必ず公式情報を確認してください。</p>
         </div>
       </div>
@@ -479,12 +480,17 @@
 
       available.sort((a, b) => (a.fee + a.package) - (b.fee + b.package));
 
+      const displayMethods = available.slice(0, 5);
+
       let text = '';
-      if (isNaN(weight)) text += '※重さ未入力のため、サイズ条件のみで判定しています。\n\n';
 
-      text += '使える可能性がある発送方法（安い順）\n';
+      if (isNaN(weight)) {
+        text += '※重さ未入力のため、サイズ条件のみで判定しています。\n\n';
+      }
 
-      available.forEach((method, index) => {
+      text += '使える可能性がある発送方法（安い順・最大5件）\n';
+
+      displayMethods.forEach((method, index) => {
         const total = method.fee + method.package;
         const weightText = method.weight === Infinity ? '指定なし' : method.weight >= 1000 ? `${method.weight / 1000}kg` : `${method.weight}g`;
         const packageText = method.package > 0 ? `送料${formatYen(method.fee)} + 資材${formatYen(method.package)}` : `送料${formatYen(method.fee)}`;
@@ -493,6 +499,10 @@
 
       const best = available[0];
       text += `\n最安候補：${best.name} 合計${formatYen(best.fee + best.package)}`;
+
+      if (available.length > 5) {
+        text += `\n※該当数が多いため、安い順に5件まで表示しています。`;
+      }
 
       resultEl.innerText = text;
     }
