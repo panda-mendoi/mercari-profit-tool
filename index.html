@@ -117,6 +117,10 @@
       margin-top: 10px;
     }
 
+    .manual-shipping {
+      display: none;
+    }
+
     footer {
       max-width: 1100px;
       margin: 22px auto 0;
@@ -153,7 +157,7 @@
     <header>
       <h1>メルカリ利益計算ツール</h1>
       <p class="lead">販売価格・送料・販売手数料から、手元に残る金額を自動計算できます。</p>
-      <p class="note">※送料・サイズ条件は変更される場合があります。実際の発送前に、必ずメルカリ公式・配送会社公式の最新情報をご確認ください。</p>
+      <p class="note">※メルカリ便以外の発送方法は、必要に応じて「その他（手入力）」で送料を入力してください。</p>
     </header>
 
     <div class="layout">
@@ -180,21 +184,36 @@
           <input type="number" id="weight" placeholder="例：500">
 
           <label for="shipping">発送方法</label>
-          <select id="shipping">
+          <select id="shipping" onchange="toggleManualShipping('shipping', 'manual-shipping-box')">
             <option value="0|0">送料なし（手渡し・同梱など）</option>
-            <option value="110|0">普通郵便（定形・50g以内 参考）</option>
-            <option value="140|0">定形外郵便（規格内・50g以内 参考）</option>
             <option value="210|0">ネコポス（¥210）</option>
-            <option value="230|0">ゆうパケット（¥230）</option>
+            <option value="450|70">宅急便コンパクト（¥450 + 専用箱¥70）</option>
+            <option value="750|0">宅急便 60サイズ（¥750）</option>
+            <option value="850|0">宅急便 80サイズ（¥850）</option>
+            <option value="1050|0">宅急便 100サイズ（¥1,050）</option>
+            <option value="1200|0">宅急便 120サイズ（¥1,200）</option>
+            <option value="1450|0">宅急便 140サイズ（¥1,450）</option>
+            <option value="1700|0">宅急便 160サイズ（¥1,700）</option>
+            <option value="160|20">ゆうパケットポスト mini（¥160 + 専用封筒¥20）</option>
             <option value="215|0">ゆうパケットポスト（送料のみ ¥215）</option>
             <option value="215|65">ゆうパケットポスト（送料¥215 + 専用箱¥65）</option>
-            <option value="160|20">ゆうパケットポスト mini（¥160 + 専用封筒¥20）</option>
-            <option value="420|0">こねこ便420（¥420）</option>
-            <option value="450|70">宅急便コンパクト（¥450 + 専用箱¥70）</option>
+            <option value="230|0">ゆうパケット（¥230）</option>
             <option value="455|65">ゆうパケットプラス（¥455 + 専用箱¥65）</option>
+            <option value="750|0">ゆうパック 60サイズ（¥750）</option>
+            <option value="870|0">ゆうパック 80サイズ（¥870）</option>
+            <option value="1070|0">ゆうパック 100サイズ（¥1,070）</option>
+            <option value="1200|0">ゆうパック 120サイズ（¥1,200）</option>
+            <option value="1450|0">ゆうパック 140サイズ（¥1,450）</option>
+            <option value="1700|0">ゆうパック 160サイズ（¥1,700）</option>
+            <option value="1900|0">ゆうパック 170サイズ（¥1,900）</option>
             <option value="730|0">エコメルカリ便（¥730）</option>
-            <option value="750|0">宅急便 60サイズ（¥750）</option>
+            <option value="manual">その他（手入力）</option>
           </select>
+
+          <div id="manual-shipping-box" class="manual-shipping">
+            <label for="manual-shipping-fee">その他の送料（円）</label>
+            <input type="number" id="manual-shipping-fee" placeholder="例：300">
+          </div>
 
           <button type="button" onclick="calculatePriceFromProfit()">販売価格を計算</button>
           <div id="result" class="result"></div>
@@ -210,21 +229,36 @@
           <input type="number" id="reverse-purchase" placeholder="例：500">
 
           <label for="reverse-shipping">発送方法（利益計算時）</label>
-          <select id="reverse-shipping">
+          <select id="reverse-shipping" onchange="toggleManualShipping('reverse-shipping', 'reverse-manual-shipping-box')">
             <option value="0|0">送料なし（手渡し・同梱など）</option>
-            <option value="110|0">普通郵便（定形・50g以内 参考）</option>
-            <option value="140|0">定形外郵便（規格内・50g以内 参考）</option>
             <option value="210|0">ネコポス（¥210）</option>
-            <option value="230|0">ゆうパケット（¥230）</option>
+            <option value="450|70">宅急便コンパクト（¥450 + 専用箱¥70）</option>
+            <option value="750|0">宅急便 60サイズ（¥750）</option>
+            <option value="850|0">宅急便 80サイズ（¥850）</option>
+            <option value="1050|0">宅急便 100サイズ（¥1,050）</option>
+            <option value="1200|0">宅急便 120サイズ（¥1,200）</option>
+            <option value="1450|0">宅急便 140サイズ（¥1,450）</option>
+            <option value="1700|0">宅急便 160サイズ（¥1,700）</option>
+            <option value="160|20">ゆうパケットポスト mini（¥160 + 専用封筒¥20）</option>
             <option value="215|0">ゆうパケットポスト（送料のみ ¥215）</option>
             <option value="215|65">ゆうパケットポスト（送料¥215 + 専用箱¥65）</option>
-            <option value="160|20">ゆうパケットポスト mini（¥160 + 専用封筒¥20）</option>
-            <option value="420|0">こねこ便420（¥420）</option>
-            <option value="450|70">宅急便コンパクト（¥450 + 専用箱¥70）</option>
+            <option value="230|0">ゆうパケット（¥230）</option>
             <option value="455|65">ゆうパケットプラス（¥455 + 専用箱¥65）</option>
+            <option value="750|0">ゆうパック 60サイズ（¥750）</option>
+            <option value="870|0">ゆうパック 80サイズ（¥870）</option>
+            <option value="1070|0">ゆうパック 100サイズ（¥1,070）</option>
+            <option value="1200|0">ゆうパック 120サイズ（¥1,200）</option>
+            <option value="1450|0">ゆうパック 140サイズ（¥1,450）</option>
+            <option value="1700|0">ゆうパック 160サイズ（¥1,700）</option>
+            <option value="1900|0">ゆうパック 170サイズ（¥1,900）</option>
             <option value="730|0">エコメルカリ便（¥730）</option>
-            <option value="750|0">宅急便 60サイズ（¥750）</option>
+            <option value="manual">その他（手入力）</option>
           </select>
+
+          <div id="reverse-manual-shipping-box" class="manual-shipping">
+            <label for="reverse-manual-shipping-fee">その他の送料（円）</label>
+            <input type="number" id="reverse-manual-shipping-fee" placeholder="例：300">
+          </div>
 
           <button type="button" onclick="calculateProfitFromPrice()">利益を計算</button>
           <div id="reverse-result" class="result"></div>
@@ -233,7 +267,7 @@
 
       <div class="right-column">
         <div class="box">
-          <h2>③ 匿名配送 最安判定</h2>
+          <h2>③ メルカリ便 最安判定</h2>
 
           <label for="judge-length">縦（cm）</label>
           <input type="number" id="judge-length" placeholder="例：24">
@@ -247,7 +281,7 @@
           <label for="judge-weight">重さ（g・任意）</label>
           <input type="number" id="judge-weight" placeholder="例：100">
 
-          <button type="button" onclick="findBestAnonymousShipping()">最安を判定</button>
+          <button type="button" onclick="findBestMercariShipping()">最安を判定</button>
           <div id="cheapest-result" class="result"></div>
 
           <p class="note">※ポスト投函可否、専用資材の有無、地域制限などは自動判定できません。発送前に必ず公式情報を確認してください。</p>
@@ -262,28 +296,64 @@
   </footer>
 
   <script>
-    const shippingOptions = [
-      { name: '送料なし', fee: 0, package: 0, rule: 'box', size: [999, 999, 999], weight: 999999 },
-      { name: '普通郵便（定形・参考）', fee: 110, package: 0, rule: 'box', size: [23.5, 12, 1], weight: 50 },
-      { name: '定形外郵便（規格内・参考）', fee: 140, package: 0, rule: 'box', size: [34, 25, 3], weight: 50 },
+    const mercariShippingOptions = [
+      { name: 'ネコポス', fee: 210, package: 0, rule: 'sum', maxLength: 31.2, maxSum: 60, maxDepth: 3, weight: 1000 },
+      { name: '宅急便コンパクト', fee: 450, package: 70, rule: 'box', size: [25, 20, 5], weight: 10000 },
+      { name: '宅急便 60サイズ', fee: 750, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, maxDepth: 60, weight: 2000 },
+      { name: '宅急便 80サイズ', fee: 850, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, maxDepth: 80, weight: 5000 },
+      { name: '宅急便 100サイズ', fee: 1050, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, maxDepth: 100, weight: 10000 },
+      { name: '宅急便 120サイズ', fee: 1200, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, maxDepth: 120, weight: 15000 },
+      { name: '宅急便 140サイズ', fee: 1450, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, maxDepth: 140, weight: 20000 },
+      { name: '宅急便 160サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, maxDepth: 160, weight: 25000 },
 
-      { name: 'ネコポス', fee: 210, package: 0, rule: 'sum', maxLength: 34, maxSum: 60, maxDepth: 3, weight: 1000 },
-      { name: 'ゆうパケット', fee: 230, package: 0, rule: 'sum', maxLength: 34, maxSum: 60, maxDepth: 3, weight: 1000 },
+      { name: 'ゆうパケットポスト mini', fee: 160, package: 20, rule: 'box', size: [21.1, 16.8, 2], weight: 2000 },
       { name: 'ゆうパケットポスト（送料のみ）', fee: 215, package: 0, rule: 'sum', maxLength: 34, maxSum: 60, maxDepth: 3, weight: 2000 },
       { name: 'ゆうパケットポスト（専用箱あり）', fee: 215, package: 65, rule: 'box', size: [32.7, 22.8, 3], weight: 2000 },
-      { name: 'ゆうパケットポスト mini', fee: 160, package: 20, rule: 'box', size: [21.1, 16.8, 2], weight: 2000 },
-      { name: 'こねこ便420', fee: 420, package: 0, rule: 'box', size: [34, 24.8, 3], weight: 4000 },
-      { name: '宅急便コンパクト', fee: 450, package: 70, rule: 'box', size: [25, 20, 5], weight: 10000 },
+      { name: 'ゆうパケット', fee: 230, package: 0, rule: 'sum', maxLength: 34, maxSum: 60, maxDepth: 3, weight: 1000 },
       { name: 'ゆうパケットプラス', fee: 455, package: 65, rule: 'box', size: [24, 17, 7], weight: 2000 },
-      { name: 'エコメルカリ便', fee: 730, package: 0, rule: 'sum', maxLength: 100, maxSum: 160, maxDepth: 100, weight: 20000 },
-      { name: '宅急便 60サイズ', fee: 750, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, maxDepth: 60, weight: 2000 }
+      { name: 'ゆうパック 60サイズ', fee: 750, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, maxDepth: 60, weight: 25000 },
+      { name: 'ゆうパック 80サイズ', fee: 870, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, maxDepth: 80, weight: 25000 },
+      { name: 'ゆうパック 100サイズ', fee: 1070, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, maxDepth: 100, weight: 25000 },
+      { name: 'ゆうパック 120サイズ', fee: 1200, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, maxDepth: 120, weight: 25000 },
+      { name: 'ゆうパック 140サイズ', fee: 1450, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, maxDepth: 140, weight: 25000 },
+      { name: 'ゆうパック 160サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, maxDepth: 160, weight: 25000 },
+      { name: 'ゆうパック 170サイズ', fee: 1900, package: 0, rule: 'sum', maxLength: 170, maxSum: 170, maxDepth: 170, weight: 25000 },
+
+      { name: 'エコメルカリ便', fee: 730, package: 0, rule: 'sum', maxLength: 100, maxSum: 160, maxDepth: 100, weight: 10000 }
     ];
 
-    const anonymousShippingOptions = shippingOptions.filter(option => {
-      return !option.name.includes('普通郵便') &&
-             !option.name.includes('定形外') &&
-             option.name !== '送料なし';
-    });
+    function toggleManualShipping(selectId, boxId) {
+      const selectedValue = document.getElementById(selectId).value;
+      const box = document.getElementById(boxId);
+
+      box.style.display = selectedValue === 'manual' ? 'block' : 'none';
+    }
+
+    function getSelectedFee(selectId) {
+      const selectedValue = document.getElementById(selectId).value;
+
+      if (selectedValue === 'manual') {
+        const manualInputId = selectId === 'shipping'
+          ? 'manual-shipping-fee'
+          : 'reverse-manual-shipping-fee';
+
+        const manualFee = parseFloat(document.getElementById(manualInputId).value);
+
+        return {
+          shippingFee: isNaN(manualFee) ? 0 : manualFee,
+          packageCost: 0,
+          isManual: true
+        };
+      }
+
+      const selected = selectedValue.split('|');
+
+      return {
+        shippingFee: parseFloat(selected[0]),
+        packageCost: parseFloat(selected[1]),
+        isManual: false
+      };
+    }
 
     function fitsBox(size, limits) {
       const sortedSize = size.slice().sort((a, b) => b - a);
@@ -314,15 +384,6 @@
       return sizeOk && weightOk;
     }
 
-    function getSelectedFee(selectId) {
-      const selected = document.getElementById(selectId).value.split('|');
-
-      return {
-        shippingFee: parseFloat(selected[0]),
-        packageCost: parseFloat(selected[1])
-      };
-    }
-
     function getAutoShippingIfPossible() {
       const length = parseFloat(document.getElementById('length').value);
       const width = parseFloat(document.getElementById('width').value);
@@ -334,7 +395,7 @@
       }
 
       const size = [length, width, depth];
-      const available = anonymousShippingOptions.filter(method => methodFits(size, weight, method));
+      const available = mercariShippingOptions.filter(method => methodFits(size, weight, method));
 
       if (available.length === 0) {
         return null;
@@ -353,12 +414,16 @@
 
       let shippingFee = selected.shippingFee;
       let packageCost = selected.packageCost;
-      let autoSelectedText = '';
+      let shippingText = '';
 
-      if (autoMethod) {
+      if (!selected.isManual && autoMethod) {
         shippingFee = autoMethod.fee;
         packageCost = autoMethod.package;
-        autoSelectedText = `\n自動判定：${autoMethod.name}を最安候補として計算`;
+        shippingText = `\n自動判定：${autoMethod.name}を最安候補として計算`;
+      }
+
+      if (selected.isManual) {
+        shippingText = '\n発送方法：その他（手入力）';
       }
 
       const resultEl = document.getElementById('result');
@@ -386,7 +451,7 @@
         `送料・資材代：¥${totalShippingCost}\n` +
         `手元に残る金額：¥${actualProfit}` +
         marginText +
-        autoSelectedText;
+        shippingText;
     }
 
     function calculateProfitFromPrice() {
@@ -411,15 +476,20 @@
         marginText = `\n仕入れ価格との差額：${sign}¥${Math.floor(margin)}`;
       }
 
+      const shippingText = selected.isManual
+        ? '\n発送方法：その他（手入力）'
+        : '';
+
       resultEl.innerText =
         `販売価格：¥${sellingPrice}\n` +
         `販売手数料：¥${fee}\n` +
         `送料・資材代：¥${totalShippingCost}\n` +
         `手元に残る金額：¥${profit}` +
-        marginText;
+        marginText +
+        shippingText;
     }
 
-    function findBestAnonymousShipping() {
+    function findBestMercariShipping() {
       const length = parseFloat(document.getElementById('judge-length').value);
       const width = parseFloat(document.getElementById('judge-width').value);
       const depth = parseFloat(document.getElementById('judge-depth').value);
@@ -433,10 +503,10 @@
       }
 
       const size = [length, width, depth];
-      const available = anonymousShippingOptions.filter(method => methodFits(size, weight, method));
+      const available = mercariShippingOptions.filter(method => methodFits(size, weight, method));
 
       if (available.length === 0) {
-        resultEl.innerText = '該当する匿名配送方法がありません。宅急便サイズや公式情報を確認してください。';
+        resultEl.innerText = '該当するメルカリ便がありません。その他の発送方法や公式情報を確認してください。';
         return;
       }
 
@@ -448,7 +518,7 @@
         text += '※重さ未入力のため、サイズ条件のみで判定しています。\n\n';
       }
 
-      text += '使える可能性がある匿名配送方法（安い順）\n';
+      text += '使える可能性があるメルカリ便（安い順）\n';
 
       available.forEach((method, index) => {
         const total = method.fee + method.package;
