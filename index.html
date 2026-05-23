@@ -184,6 +184,7 @@
             <option value="">選択してください</option>
             <option value="rakuraku">らくらくメルカリ便</option>
             <option value="yuyu">ゆうゆうメルカリ便</option>
+            <option value="eco">エコメルカリ便</option>
             <option value="tanomeru">梱包・発送たのメル便</option>
             <option value="other">その他</option>
           </select>
@@ -216,6 +217,7 @@
             <option value="">選択してください</option>
             <option value="rakuraku">らくらくメルカリ便</option>
             <option value="yuyu">ゆうゆうメルカリ便</option>
+            <option value="eco">エコメルカリ便</option>
             <option value="tanomeru">梱包・発送たのメル便</option>
             <option value="other">その他</option>
           </select>
@@ -245,6 +247,7 @@
             <option value="all">メルカリ便すべて</option>
             <option value="rakuraku">らくらくメルカリ便</option>
             <option value="yuyu">ゆうゆうメルカリ便</option>
+            <option value="eco">エコメルカリ便</option>
             <option value="tanomeru">梱包・発送たのメル便</option>
           </select>
 
@@ -277,41 +280,56 @@
   <script>
     const shippingData = {
       rakuraku: [
-        { name: 'ネコポス', fee: 210, package: 0, rule: 'sum', maxLength: 31.2, maxSum: 60, maxDepth: 3, weight: 1000 },
-        { name: '宅急便コンパクト', fee: 450, package: 70, rule: 'box', size: [25, 20, 5], weight: 10000 },
-        { name: '宅急便 60サイズ', fee: 750, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, maxDepth: 60, weight: 2000 },
-        { name: '宅急便 80サイズ', fee: 850, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, maxDepth: 80, weight: 5000 },
-        { name: '宅急便 100サイズ', fee: 1050, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, maxDepth: 100, weight: 10000 },
-        { name: '宅急便 120サイズ', fee: 1200, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, maxDepth: 120, weight: 15000 },
-        { name: '宅急便 140サイズ', fee: 1450, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, maxDepth: 140, weight: 20000 },
-        { name: '宅急便 160サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, maxDepth: 160, weight: 25000 }
+        { name: 'ネコポス', fee: 210, package: 0, rule: 'sum', maxLength: 31.2, maxSum: 60, weight: 1000 },
+        { name: '宅急便コンパクト', fee: 450, package: 70, rule: 'box', size: [25, 20, 5], weight: Infinity },
+        { name: '宅急便 60サイズ', fee: 750, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, weight: 2000 },
+        { name: '宅急便 80サイズ', fee: 850, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 5000 },
+        { name: '宅急便 100サイズ', fee: 1050, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, weight: 10000 },
+        { name: '宅急便 120サイズ', fee: 1200, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, weight: 15000 },
+        { name: '宅急便 140サイズ', fee: 1450, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, weight: 20000 },
+        { name: '宅急便 160サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, weight: 25000 },
+        { name: '宅急便 170サイズ', fee: 2100, package: 0, rule: 'sum', maxLength: 170, maxSum: 170, weight: 30000 },
+        { name: '宅急便 180サイズ', fee: 2100, package: 0, rule: 'sum', maxLength: 180, maxSum: 180, weight: 30000 },
+        { name: '宅急便 200サイズ', fee: 2500, package: 0, rule: 'sum', maxLength: 200, maxSum: 200, weight: 30000 }
       ],
 
       yuyu: [
         { name: 'ゆうパケットポスト mini', fee: 160, package: 20, rule: 'box', size: [21.1, 16.8, 2], weight: 2000 },
-        { name: 'ゆうパケットポスト（送料のみ）', fee: 215, package: 0, rule: 'sum', maxLength: 34, maxSum: 60, maxDepth: 3, weight: 2000 },
-        { name: 'ゆうパケットポスト（専用箱あり）', fee: 215, package: 65, rule: 'box', size: [32.7, 22.8, 3], weight: 2000 },
-        { name: 'ゆうパケット', fee: 230, package: 0, rule: 'sum', maxLength: 34, maxSum: 60, maxDepth: 3, weight: 1000 },
+        { name: 'ゆうパケットポスト（専用シール）', fee: 215, package: 5, rule: 'sum', maxLength: 34, maxSum: 60, weight: 2000 },
+        { name: 'ゆうパケットポスト（専用箱）', fee: 215, package: 65, rule: 'box', size: [32.7, 22.8, 3], weight: 2000 },
+        { name: 'ゆうパケット', fee: 230, package: 0, rule: 'sum', maxLength: 34, maxSum: 60, weight: 1000 },
         { name: 'ゆうパケットプラス', fee: 455, package: 65, rule: 'box', size: [24, 17, 7], weight: 2000 },
-        { name: 'ゆうパック 60サイズ', fee: 750, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, maxDepth: 60, weight: 25000 },
-        { name: 'ゆうパック 80サイズ', fee: 870, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, maxDepth: 80, weight: 25000 },
-        { name: 'ゆうパック 100サイズ', fee: 1070, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, maxDepth: 100, weight: 25000 },
-        { name: 'ゆうパック 120サイズ', fee: 1200, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, maxDepth: 120, weight: 25000 },
-        { name: 'ゆうパック 140サイズ', fee: 1450, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, maxDepth: 140, weight: 25000 },
-        { name: 'ゆうパック 160サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, maxDepth: 160, weight: 25000 },
-        { name: 'ゆうパック 170サイズ', fee: 1900, package: 0, rule: 'sum', maxLength: 170, maxSum: 170, maxDepth: 170, weight: 25000 }
+        { name: 'ゆうパック 60サイズ', fee: 750, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, weight: 25000 },
+        { name: 'ゆうパック 80サイズ', fee: 870, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 25000 },
+        { name: 'ゆうパック 100サイズ', fee: 1070, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, weight: 25000 },
+        { name: 'ゆうパック 120サイズ', fee: 1200, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, weight: 25000 },
+        { name: 'ゆうパック 140サイズ', fee: 1450, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, weight: 25000 },
+        { name: 'ゆうパック 160サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, weight: 25000 },
+        { name: 'ゆうパック 170サイズ', fee: 1900, package: 0, rule: 'sum', maxLength: 170, maxSum: 170, weight: 25000 }
+      ],
+
+      eco: [
+        { name: '宅配便 60サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, weight: 10000 },
+        { name: '宅配便 80サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 10000 },
+        { name: '宅配便 100サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, weight: 10000 },
+        { name: '置き発送 60サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, weight: 20000 },
+        { name: '置き発送 80サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 20000 },
+        { name: '置き発送 100サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, weight: 20000 },
+        { name: '置き発送 120サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, weight: 20000 },
+        { name: '置き発送 140サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, weight: 20000 },
+        { name: '置き発送 160サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, weight: 20000 }
       ],
 
       tanomeru: [
-        { name: '宅配便 80サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, maxDepth: 80, weight: 100000 },
-        { name: '宅配便 120サイズ', fee: 2400, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, maxDepth: 120, weight: 100000 },
-        { name: '宅配便 160サイズ', fee: 3400, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, maxDepth: 160, weight: 100000 },
-        { name: '宅配便 200サイズ', fee: 5000, package: 0, rule: 'sum', maxLength: 200, maxSum: 200, maxDepth: 200, weight: 150000 },
-        { name: '宅配便 250サイズ', fee: 8600, package: 0, rule: 'sum', maxLength: 250, maxSum: 250, maxDepth: 250, weight: 150000 },
-        { name: '宅配便 300サイズ', fee: 12000, package: 0, rule: 'sum', maxLength: 300, maxSum: 300, maxDepth: 300, weight: 150000 },
-        { name: '宅配便 350サイズ', fee: 18500, package: 0, rule: 'sum', maxLength: 350, maxSum: 350, maxDepth: 350, weight: 150000 },
-        { name: '宅配便 400サイズ', fee: 25400, package: 0, rule: 'sum', maxLength: 400, maxSum: 400, maxDepth: 400, weight: 150000 },
-        { name: '宅配便 450サイズ', fee: 33000, package: 0, rule: 'sum', maxLength: 450, maxSum: 450, maxDepth: 450, weight: 150000 }
+        { name: '自宅集荷 80サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 150000 },
+        { name: '自宅集荷 120サイズ', fee: 2400, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, weight: 150000 },
+        { name: '自宅集荷 160サイズ', fee: 3400, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, weight: 150000 },
+        { name: '自宅集荷 200サイズ', fee: 5000, package: 0, rule: 'sum', maxLength: 200, maxSum: 200, weight: 150000 },
+        { name: '自宅集荷 250サイズ', fee: 8600, package: 0, rule: 'sum', maxLength: 250, maxSum: 250, weight: 150000 },
+        { name: '自宅集荷 300サイズ', fee: 12000, package: 0, rule: 'sum', maxLength: 300, maxSum: 300, weight: 150000 },
+        { name: '自宅集荷 350サイズ', fee: 18500, package: 0, rule: 'sum', maxLength: 350, maxSum: 350, weight: 150000 },
+        { name: '自宅集荷 400サイズ', fee: 25400, package: 0, rule: 'sum', maxLength: 400, maxSum: 400, weight: 150000 },
+        { name: '自宅集荷 450サイズ', fee: 33000, package: 0, rule: 'sum', maxLength: 450, maxSum: 450, weight: 150000 }
       ]
     };
 
@@ -319,6 +337,7 @@
       return [
         ...shippingData.rakuraku,
         ...shippingData.yuyu,
+        ...shippingData.eco,
         ...shippingData.tanomeru
       ];
     }
@@ -361,7 +380,7 @@
         const option = document.createElement('option');
         option.value = index;
         const total = method.fee + method.package;
-        option.textContent = `${method.name}（${formatYen(total)}）`;
+        option.textContent = `${method.name}（送料${formatYen(method.fee)}${method.package > 0 ? `＋資材${formatYen(method.package)}` : ''} / 合計${formatYen(total)}）`;
         methodSelect.appendChild(option);
       });
 
@@ -475,7 +494,9 @@
         `販売価格の目安：${formatYen(sellingPrice)}\n` +
         `発送方法：${selected.name}\n` +
         `販売手数料：${formatYen(fee)}\n` +
-        `送料・資材代：${formatYen(totalShippingCost)}\n` +
+        `送料：${formatYen(selected.shippingFee)}\n` +
+        `資材代：${formatYen(selected.packageCost)}\n` +
+        `送料・資材代 合計：${formatYen(totalShippingCost)}\n` +
         `手元に残る金額：${formatYen(actualProfit)}` +
         marginText;
     }
@@ -512,7 +533,9 @@
         `販売価格：${formatYen(sellingPrice)}\n` +
         `発送方法：${selected.name}\n` +
         `販売手数料：${formatYen(fee)}\n` +
-        `送料・資材代：${formatYen(totalShippingCost)}\n` +
+        `送料：${formatYen(selected.shippingFee)}\n` +
+        `資材代：${formatYen(selected.packageCost)}\n` +
+        `送料・資材代 合計：${formatYen(totalShippingCost)}\n` +
         `手元に残る金額：${formatYen(profit)}` +
         marginText;
     }
@@ -560,7 +583,7 @@
 
       available.forEach((method, index) => {
         const total = method.fee + method.package;
-        const weightText = method.weight >= 1000 ? `${method.weight / 1000}kg` : `${method.weight}g`;
+        const weightText = method.weight === Infinity ? '指定なし' : method.weight >= 1000 ? `${method.weight / 1000}kg` : `${method.weight}g`;
         const packageText = method.package > 0
           ? `送料${formatYen(method.fee)} + 資材${formatYen(method.package)}`
           : `送料${formatYen(method.fee)}`;
