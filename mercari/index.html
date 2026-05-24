@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>メルカリ利益計算ツール｜ぱんだツール工房</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+      padding: 20px;
+      margin: 0;
+      background: #f7f7f7;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    .page { max-width: 1100px; margin: 0 auto; }
+
+    header, .box {
+      background: #fff;
+      border: 1px solid #d9d9d9;
+      border-radius: 16px;
+      padding: 22px;
+      box-sizing: border-box;
+    }
+
+    header { margin-bottom: 20px; }
+
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    h2 { margin: 0 0 14px; font-size: 18px; }
+
+    .lead { margin: 0; color: #555; font-size: 15px; }
+
+    .layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .left-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-width: 320px;
+    }
+
+    .right-column {
+      flex: 1;
+      min-width: 320px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 6px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    input, select, button {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px;
+      padding: 11px 12px;
+      border: 1px solid #bdbdbd;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    button {
+      margin-top: 14px;
+      background: #222;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      border: none;
+    }
+
+    button:hover { opacity: 0.88; }
+
+    .reset-button {
+      background: #888;
+      margin-top: 10px;
+    }
+
+    .result {
+      margin-top: 16px;
+      line-height: 1.7;
+      background: #f3f3f3;
+      border-radius: 12px;
+      padding: 14px;
+      min-height: 24px;
+    }
+
+    .result-main {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 4px 0;
+    }
+
+    .result-sub {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin: 2px 0;
+    }
+
+    .result-divider {
+      border-top: 1px dashed #aaa;
+      margin: 10px 0;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    .hidden { display: none; }
+
+    footer {
+      max-width: 1100px;
+      margin: 22px auto 0;
+      padding: 16px;
+      color: #666;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      body { padding: 12px; }
+      h1 { font-size: 23px; }
+      .layout { flex-direction: column; }
+      .left-column, .right-column { width: 100%; min-width: 0; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <h1>メルカリ利益計算ツール</h1>
+      <p class="lead">販売価格・送料・販売手数料から、手元に残る金額を自動計算できます。</p>
+      <p class="note">※配送カテゴリと発送方法を選択してから計算してください。送料・サイズ条件は変更される場合があります。</p>
+    </header>
+
+    <div class="layout">
+      <div class="left-column">
+        <div class="box">
+          <h2>① 利益から販売価格を計算</h2>
+
+          <label for="profit">手元に残したい金額（円）</label>
+          <input type="number" id="profit" placeholder="例：1000">
+
+          <label for="purchase">仕入れ価格（購入時の金額・任意）</label>
+          <input type="number" id="purchase" placeholder="例：500">
+
+          <label for="shipping-category">配送カテゴリ</label>
+          <select id="shipping-category" onchange="updateShippingMethods('shipping-category', 'shipping-method', 'shipping-method-box', 'manual-shipping-box')">
+            <option value="">選択してください</option>
+            <option value="rakuraku">らくらくメルカリ便</option>
+            <option value="yuyu">ゆうゆうメルカリ便</option>
+            <option value="eco">エコメルカリ便</option>
+            <option value="tanomeru">梱包・発送たのメル便</option>
+            <option value="other">その他</option>
+          </select>
+
+          <div id="shipping-method-box" class="hidden">
+            <label for="shipping-method">発送方法</label>
+            <select id="shipping-method"></select>
+          </div>
+
+          <div id="manual-shipping-box" class="hidden">
+            <label for="manual-shipping-fee">送料（円）</label>
+            <input type="number" id="manual-shipping-fee" placeholder="例：300">
+          </div>
+
+          <button type="button" onclick="calculatePriceFromProfit()">販売価格を計算</button>
+          <button type="button" class="reset-button" onclick="resetPriceCalc()">リセット</button>
+          <div id="result" class="result"></div>
+        </div>
+
+        <div class="box">
+          <h2>② 販売価格から利益を逆算</h2>
+
+          <label for="selling-price">販売価格（円）</label>
+          <input type="number" id="selling-price" placeholder="例：2000">
+
+          <label for="reverse-purchase">仕入れ価格（購入時の金額・任意）</label>
+          <input type="number" id="reverse-purchase" placeholder="例：500">
+
+          <label for="reverse-shipping-category">配送カテゴリ</label>
+          <select id="reverse-shipping-category" onchange="updateShippingMethods('reverse-shipping-category', 'reverse-shipping-method', 'reverse-shipping-method-box', 'reverse-manual-shipping-box')">
+            <option value="">選択してください</option>
+            <option value="rakuraku">らくらくメルカリ便</option>
+            <option value="yuyu">ゆうゆうメルカリ便</option>
+            <option value="eco">エコメルカリ便</option>
+            <option value="tanomeru">梱包・発送たのメル便</option>
+            <option value="other">その他</option>
+          </select>
+
+          <div id="reverse-shipping-method-box" class="hidden">
+            <label for="reverse-shipping-method">発送方法</label>
+            <select id="reverse-shipping-method"></select>
+          </div>
+
+          <div id="reverse-manual-shipping-box" class="hidden">
+            <label for="reverse-manual-shipping-fee">送料（円）</label>
+            <input type="number" id="reverse-manual-shipping-fee" placeholder="例：300">
+          </div>
+
+          <button type="button" onclick="calculateProfitFromPrice()">利益を計算</button>
+          <button type="button" class="reset-button" onclick="resetProfitCalc()">リセット</button>
+          <div id="reverse-result" class="result"></div>
+        </div>
+      </div>
+
+      <div class="right-column">
+        <div class="box">
+          <h2>③ メルカリ便 最安判定</h2>
+
+          <label for="judge-category">配送カテゴリ</label>
+          <select id="judge-category">
+            <option value="">選択してください</option>
+            <option value="all">メルカリ便すべて</option>
+            <option value="rakuraku">らくらくメルカリ便</option>
+            <option value="yuyu">ゆうゆうメルカリ便</option>
+            <option value="eco">エコメルカリ便</option>
+            <option value="tanomeru">梱包・発送たのメル便</option>
+          </select>
+
+          <label for="judge-length">縦（cm）</label>
+          <input type="number" id="judge-length" placeholder="例：24">
+
+          <label for="judge-width">横（cm）</label>
+          <input type="number" id="judge-width" placeholder="例：17">
+
+          <label for="judge-depth">厚さ（cm）</label>
+          <input type="number" id="judge-depth" placeholder="例：3">
+
+          <label for="judge-weight">重さ（g・任意）</label>
+          <input type="number" id="judge-weight" placeholder="例：100">
+
+          <button type="button" onclick="findBestMercariShipping()">最安を判定</button>
+          <button type="button" class="reset-button" onclick="resetJudgeCalc()">リセット</button>
+          <div id="cheapest-result" class="result"></div>
+
+          <p class="note">※該当する発送方法が複数ある場合は、安い順に最大5件まで表示します。</p>
+          <p class="note">※ポスト投函可否、専用資材の有無、地域制限などは自動判定できません。発送前に必ず公式情報を確認してください。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>制作：ぱんだツール工房</p>
+    <p>本ツールは個人制作の補助ツールです。メルカリ公式ツールではありません。</p>
+  </footer>
+
+  <script>
+    const shippingData = {
+      rakuraku: [
+        { name: 'ネコポス', fee: 210, package: 0, rule: 'sum', maxLength: 31.2, maxSum: 60, weight: 1000 },
+        { name: '宅急便コンパクト', fee: 450, package: 70, rule: 'box', size: [25, 20, 5], weight: Infinity },
+        { name: '宅急便 60サイズ', fee: 750, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, weight: 2000 },
+        { name: '宅急便 80サイズ', fee: 850, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 5000 },
+        { name: '宅急便 100サイズ', fee: 1050, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, weight: 10000 },
+        { name: '宅急便 120サイズ', fee: 1200, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, weight: 15000 },
+        { name: '宅急便 140サイズ', fee: 1450, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, weight: 20000 },
+        { name: '宅急便 160サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, weight: 25000 },
+        { name: '宅急便 170サイズ', fee: 2100, package: 0, rule: 'sum', maxLength: 170, maxSum: 170, weight: 30000 },
+        { name: '宅急便 180サイズ', fee: 2100, package: 0, rule: 'sum', maxLength: 180, maxSum: 180, weight: 30000 },
+        { name: '宅急便 200サイズ', fee: 2500, package: 0, rule: 'sum', maxLength: 200, maxSum: 200, weight: 30000 }
+      ],
+      yuyu: [
+        { name: 'ゆうパケットポスト mini', fee: 160, package: 20, rule: 'box', size: [21.1, 16.8, 2], weight: 2000 },
+        { name: 'ゆうパケットポスト（専用シール）', fee: 215, package: 5, rule: 'sum', maxLength: 34, maxSum: 60, weight: 2000 },
+        { name: 'ゆうパケットポスト（専用箱）', fee: 215, package: 65, rule: 'box', size: [32.7, 22.8, 3], weight: 2000 },
+        { name: 'ゆうパケット', fee: 230, package: 0, rule: 'sum', maxLength: 34, maxSum: 60, weight: 1000 },
+        { name: 'ゆうパケットプラス', fee: 455, package: 65, rule: 'box', size: [24, 17, 7], weight: 2000 },
+        { name: 'ゆうパック 60サイズ', fee: 750, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, weight: 25000 },
+        { name: 'ゆうパック 80サイズ', fee: 870, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 25000 },
+        { name: 'ゆうパック 100サイズ', fee: 1070, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, weight: 25000 },
+        { name: 'ゆうパック 120サイズ', fee: 1200, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, weight: 25000 },
+        { name: 'ゆうパック 140サイズ', fee: 1450, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, weight: 25000 },
+        { name: 'ゆうパック 160サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, weight: 25000 },
+        { name: 'ゆうパック 170サイズ', fee: 1900, package: 0, rule: 'sum', maxLength: 170, maxSum: 170, weight: 25000 }
+      ],
+      eco: [
+        { name: '宅配便 60サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, weight: 10000 },
+        { name: '宅配便 80サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 10000 },
+        { name: '宅配便 100サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, weight: 10000 },
+        { name: '置き発送 60サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 60, maxSum: 60, weight: 20000 },
+        { name: '置き発送 80サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 20000 },
+        { name: '置き発送 100サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 100, maxSum: 100, weight: 20000 },
+        { name: '置き発送 120サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, weight: 20000 },
+        { name: '置き発送 140サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 140, maxSum: 140, weight: 20000 },
+        { name: '置き発送 160サイズ', fee: 730, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, weight: 20000 }
+      ],
+      tanomeru: [
+        { name: '自宅集荷 80サイズ', fee: 1700, package: 0, rule: 'sum', maxLength: 80, maxSum: 80, weight: 150000 },
+        { name: '自宅集荷 120サイズ', fee: 2400, package: 0, rule: 'sum', maxLength: 120, maxSum: 120, weight: 150000 },
+        { name: '自宅集荷 160サイズ', fee: 3400, package: 0, rule: 'sum', maxLength: 160, maxSum: 160, weight: 150000 },
+        { name: '自宅集荷 200サイズ', fee: 5000, package: 0, rule: 'sum', maxLength: 200, maxSum: 200, weight: 150000 },
+        { name: '自宅集荷 250サイズ', fee: 8600, package: 0, rule: 'sum', maxLength: 250, maxSum: 250, weight: 150000 },
+        { name: '自宅集荷 300サイズ', fee: 12000, package: 0, rule: 'sum', maxLength: 300, maxSum: 300, weight: 150000 },
+        { name: '自宅集荷 350サイズ', fee: 18500, package: 0, rule: 'sum', maxLength: 350, maxSum: 350, weight: 150000 },
+        { name: '自宅集荷 400サイズ', fee: 25400, package: 0, rule: 'sum', maxLength: 400, maxSum: 400, weight: 150000 },
+        { name: '自宅集荷 450サイズ', fee: 33000, package: 0, rule: 'sum', maxLength: 450, maxSum: 450, weight: 150000 }
+      ]
+    };
+
+    function getAllMercariShippingOptions() {
+      return [...shippingData.rakuraku, ...shippingData.yuyu, ...shippingData.eco, ...shippingData.tanomeru];
+    }
+
+    function formatYen(value) {
+      return `${Number(value).toLocaleString()}円`;
+    }
+
+    function formatMethodLabel(method) {
+      const total = method.fee + method.package;
+      if (method.package > 0) {
+        return `${method.name}：${formatYen(total)}（送料${formatYen(method.fee)}＋資材${formatYen(method.package)}）`;
+      }
+      return `${method.name}：${formatYen(total)}`;
+    }
+
+    function updateShippingMethods(categoryId, methodId, methodBoxId, manualBoxId) {
+      const category = document.getElementById(categoryId).value;
+      const methodSelect = document.getElementById(methodId);
+      const methodBox = document.getElementById(methodBoxId);
+      const manualBox = document.getElementById(manualBoxId);
+
+      methodSelect.innerHTML = '';
+      methodBox.classList.add('hidden');
+      manualBox.classList.add('hidden');
+
+      if (!category) return;
+
+      if (category === 'other') {
+        manualBox.classList.remove('hidden');
+        return;
+      }
+
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = '選択してください';
+      methodSelect.appendChild(placeholder);
+
+      shippingData[category].forEach((method, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = formatMethodLabel(method);
+        methodSelect.appendChild(option);
+      });
+
+      methodBox.classList.remove('hidden');
+    }
+
+    function getSelectedShipping(categoryId, methodId, manualInputId) {
+      const category = document.getElementById(categoryId).value;
+
+      if (!category) return { ok: false, message: '配送カテゴリを選択してください。' };
+
+      if (category === 'other') {
+        const manualFee = parseFloat(document.getElementById(manualInputId).value);
+        if (isNaN(manualFee)) return { ok: false, message: 'その他の送料を入力してください。' };
+        return { ok: true, name: 'その他（手入力）', shippingFee: manualFee, packageCost: 0 };
+      }
+
+      const methodIndex = document.getElementById(methodId).value;
+      if (methodIndex === '') return { ok: false, message: '発送方法を選択してください。' };
+
+      const method = shippingData[category][Number(methodIndex)];
+      return { ok: true, name: method.name, shippingFee: method.fee, packageCost: method.package };
+    }
+
+    function fitsBox(size, limits) {
+      const sortedSize = size.slice().sort((a, b) => b - a);
+      const sortedLimit = limits.slice().sort((a, b) => b - a);
+      return sortedSize[0] <= sortedLimit[0] && sortedSize[1] <= sortedLimit[1] && sortedSize[2] <= sortedLimit[2];
+    }
+
+    function fitsSum(size, method) {
+      const longest = Math.max(...size);
+      const total = size.reduce((sum, value) => sum + value, 0);
+      return longest <= method.maxLength && total <= method.maxSum;
+    }
+
+    function methodFits(size, weight, method) {
+      const sizeOk = method.rule === 'box' ? fitsBox(size, method.size) : fitsSum(size, method);
+      const weightOk = isNaN(weight) ? true : weight <= method.weight;
+      return sizeOk && weightOk;
+    }
+
+    function calculatePriceFromProfit() {
+      const resultEl = document.getElementById('result');
+      const desiredProfit = parseFloat(document.getElementById('profit').value);
+      const purchaseCost = parseFloat(document.getElementById('purchase').value);
+
+      if (isNaN(desiredProfit)) {
+        resultEl.innerHTML = '<div class="result-sub">手元に残したい金額を入力してください。</div>';
+        return;
+      }
+
+      const selected = getSelectedShipping('shipping-category', 'shipping-method', 'manual-shipping-fee');
+
+      if (!selected.ok) {
+        resultEl.innerHTML = `<div class="result-sub">${selected.message}</div>`;
+        return;
+      }
+
+      const totalShippingCost = selected.shippingFee + selected.packageCost;
+      const sellingPrice = Math.ceil((desiredProfit + totalShippingCost) / 0.9);
+      const fee = Math.floor(sellingPrice * 0.1);
+      const actualProfit = sellingPrice - fee - totalShippingCost;
+
+      const marginHtml = !isNaN(purchaseCost)
+        ? `<div class="result-sub">仕入れ価格との差額：${actualProfit - purchaseCost >= 0 ? '+' : ''}${formatYen(Math.floor(actualProfit - purchaseCost))}</div>`
+        : '';
+
+      resultEl.innerHTML = `
+        <div class="result-main">販売価格の目安：${formatYen(sellingPrice)}</div>
+        <div class="result-divider"></div>
+        <div class="result-sub">発送方法：${selected.name}</div>
+        <div class="result-sub">販売手数料：${formatYen(fee)}</div>
+        <div class="result-sub">送料：${formatYen(selected.shippingFee)}</div>
+        <div class="result-sub">資材代：${formatYen(selected.packageCost)}</div>
+        <div class="result-sub">送料・資材代：${formatYen(totalShippingCost)}</div>
+        ${marginHtml}
+        <div class="result-divider"></div>
+        <div class="result-main">手元に残る金額：${formatYen(actualProfit)}</div>
+      `;
+    }
+
+    function calculateProfitFromPrice() {
+      const resultEl = document.getElementById('reverse-result');
+      const sellingPrice = parseFloat(document.getElementById('selling-price').value);
+      const purchaseCost = parseFloat(document.getElementById('reverse-purchase').value);
+
+      if (isNaN(sellingPrice)) {
+        resultEl.innerHTML = '<div class="result-sub">販売価格を入力してください。</div>';
+        return;
+      }
+
+      const selected = getSelectedShipping('reverse-shipping-category', 'reverse-shipping-method', 'reverse-manual-shipping-fee');
+
+      if (!selected.ok) {
+        resultEl.innerHTML = `<div class="result-sub">${selected.message}</div>`;
+        return;
+      }
+
+      const fee = Math.floor(sellingPrice * 0.1);
+      const totalShippingCost = selected.shippingFee + selected.packageCost;
+      const profit = Math.floor(sellingPrice - fee - totalShippingCost);
+
+      const marginHtml = !isNaN(purchaseCost)
+        ? `<div class="result-sub">仕入れ価格との差額：${profit - purchaseCost >= 0 ? '+' : ''}${formatYen(Math.floor(profit - purchaseCost))}</div>`
+        : '';
+
+      resultEl.innerHTML = `
+        <div class="result-main">手元に残る金額：${formatYen(profit)}</div>
+        <div class="result-divider"></div>
+        <div class="result-sub">販売価格：${formatYen(sellingPrice)}</div>
+        <div class="result-sub">発送方法：${selected.name}</div>
+        <div class="result-sub">販売手数料：${formatYen(fee)}</div>
+        <div class="result-sub">送料：${formatYen(selected.shippingFee)}</div>
+        <div class="result-sub">資材代：${formatYen(selected.packageCost)}</div>
+        <div class="result-sub">送料・資材代：${formatYen(totalShippingCost)}</div>
+        ${marginHtml}
+      `;
+    }
+
+    function findBestMercariShipping() {
+      const resultEl = document.getElementById('cheapest-result');
+      const category = document.getElementById('judge-category').value;
+      const length = parseFloat(document.getElementById('judge-length').value);
+      const width = parseFloat(document.getElementById('judge-width').value);
+      const depth = parseFloat(document.getElementById('judge-depth').value);
+      const weightRaw = document.getElementById('judge-weight').value;
+      const weight = weightRaw === '' ? NaN : parseFloat(weightRaw);
+
+      if (!category) {
+        resultEl.innerHTML = '<div class="result-sub">配送カテゴリを選択してください。</div>';
+        return;
+      }
+
+      if (isNaN(length) || isNaN(width) || isNaN(depth)) {
+        resultEl.innerHTML = '<div class="result-sub">縦・横・厚さを入力してください。</div>';
+        return;
+      }
+
+      const size = [length, width, depth];
+      const targetMethods = category === 'all' ? getAllMercariShippingOptions() : shippingData[category];
+      const available = targetMethods.filter(method => methodFits(size, weight, method));
+
+      if (available.length === 0) {
+        resultEl.innerHTML = '<div class="result-sub">該当する発送方法がありません。その他の発送方法や公式情報を確認してください。</div>';
+        return;
+      }
+
+      available.sort((a, b) => (a.fee + a.package) - (b.fee + b.package));
+
+      const displayMethods = available.slice(0, 5);
+      const best = available[0];
+
+      let methodsHtml = '';
+
+      displayMethods.forEach((method, index) => {
+        const weightText = method.weight === Infinity ? '指定なし' : method.weight >= 1000 ? `${method.weight / 1000}kg` : `${method.weight}g`;
+        methodsHtml += `<div class="result-sub">${index + 1}. ${formatMethodLabel(method)} / 重さ上限 ${weightText}</div>`;
+      });
+
+      resultEl.innerHTML = `
+        <div class="result-main">最安候補：${formatMethodLabel(best)}</div>
+        <div class="result-divider"></div>
+        ${isNaN(weight) ? '<div class="result-sub">※重さ未入力のため、サイズ条件のみで判定しています。</div>' : ''}
+        <div class="result-sub">使える可能性がある発送方法（安い順・最大5件）</div>
+        ${methodsHtml}
+        ${available.length > 5 ? '<div class="result-sub">※該当数が多いため、安い順に5件まで表示しています。</div>' : ''}
+      `;
+    }
+
+    function resetPriceCalc() {
+      document.getElementById('profit').value = '';
+      document.getElementById('purchase').value = '';
+      document.getElementById('shipping-category').value = '';
+      document.getElementById('shipping-method').innerHTML = '';
+      document.getElementById('manual-shipping-fee').value = '';
+      document.getElementById('shipping-method-box').classList.add('hidden');
+      document.getElementById('manual-shipping-box').classList.add('hidden');
+      document.getElementById('result').innerHTML = '';
+    }
+
+    function resetProfitCalc() {
+      document.getElementById('selling-price').value = '';
+      document.getElementById('reverse-purchase').value = '';
+      document.getElementById('reverse-shipping-category').value = '';
+      document.getElementById('reverse-shipping-method').innerHTML = '';
+      document.getElementById('reverse-manual-shipping-fee').value = '';
+      document.getElementById('reverse-shipping-method-box').classList.add('hidden');
+      document.getElementById('reverse-manual-shipping-box').classList.add('hidden');
+      document.getElementById('reverse-result').innerHTML = '';
+    }
+
+    function resetJudgeCalc() {
+      document.getElementById('judge-category').value = '';
+      document.getElementById('judge-length').value = '';
+      document.getElementById('judge-width').value = '';
+      document.getElementById('judge-depth').value = '';
+      document.getElementById('judge-weight').value = '';
+      document.getElementById('cheapest-result').innerHTML = '';
+    }
+  </script>
+</body>
+</html>
