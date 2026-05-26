@@ -111,6 +111,22 @@ a {
   padding: 20px 0 10px;
 }
 
+.char-count {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 900;
+  color: #777;
+  line-height: 1.6;
+}
+
+.char-count.ok {
+  color: #15803d;
+}
+
+.char-count.error {
+  color: #dc2626;
+}
+
 @media (max-width: 480px) {
   .container {
     padding: 12px;
