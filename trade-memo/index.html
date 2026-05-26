@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>ランダムグッズ交換メモ作成ツール | ぱんだツール工房</title>
+  <meta name="description" content="ランダムグッズの譲渡・交換募集文をかんたんに作成できる無料ツールです。" />
+
+  <link rel="stylesheet" href="/style.css" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1423860406473731"
+       crossorigin="anonymous"></script>
+
+  <style>
+    .form-label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px;
+      padding: 12px;
+      border: 2px solid #f2d78a;
+      border-radius: 14px;
+      background: #fffdf5;
+      color: #1f2937;
+      outline: none;
+    }
+
+    .form-textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .tool-button {
+      width: 100%;
+      margin-top: 14px;
+      border: none;
+      border-radius: 999px;
+      padding: 14px;
+      background: #f2a900;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .reset-button {
+      background: #888;
+    }
+
+    .result-box {
+      white-space: pre-wrap;
+      background: #fff1b8;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="site-header">
+      <h1 class="logo">ランダムグッズ交換メモ作成ツール</h1>
+      <p class="catch">
+        譲・求・条件を入力するだけで、<br>
+        交換募集用のメモ文を作れます。
+      </p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2 class="section-title">交換メモを作る</h2>
+
+        <label class="form-label" for="title">作品名・グッズ名</label>
+        <input class="form-input" id="title" placeholder="例：〇〇 カフェ アクスタ、ランダム缶バッジ" />
+
+        <label class="form-label" for="offer">譲</label>
+        <textarea class="form-textarea" id="offer" placeholder="例：A、B、C"></textarea>
+
+        <label class="form-label" for="want">求</label>
+        <textarea class="form-textarea" id="want" placeholder="例：D、E、定価＋送料"></textarea>
+
+        <label class="form-label" for="method">交換方法</label>
+        <select class="form-select" id="method">
+          <option value="郵送交換希望です。">郵送交換</option>
+          <option value="都内手渡し希望です。">都内手渡し</option>
+          <option value="郵送または手渡し可能です。">郵送・手渡しどちらも可</option>
+          <option value="イベント会場での手渡し希望です。">イベント会場手渡し</option>
+        </select>
+
+        <label class="form-label" for="condition">条件</label>
+        <select class="form-select" id="condition">
+          <option value="検索からでもお気軽にお声がけください。">検索からも歓迎</option>
+          <option value="まとめての方を優先させていただきます。">まとめて優先</option>
+          <option value="条件の良い方を優先させていただきます。">条件の良い方優先</option>
+          <option value="初回の方はプロフィールをご確認ください。">初回プロカ確認</option>
+        </select>
+
+        <label class="form-label" for="note">補足</label>
+        <textarea class="form-textarea" id="note" placeholder="例：異種交換可、比率違い相談可、友人分含む"></textarea>
+
+        <button class="tool-button" onclick="generateMemo()">交換メモを作成</button>
+        <button class="tool-button reset-button" onclick="resetForm()">リセット</button>
+
+        <div class="result-box" id="result">ここに交換メモが表示されます。</div>
+
+        <button class="tool-button" onclick="copyMemo()">メモをコピーする</button>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">サイト情報</h2>
+        <ul class="link-list">
+          <li><a href="/">トップページ</a></li>
+          <li><a href="/mercari/">メルカリ利益計算ツール</a></li>
+          <li><a href="/frima-template/">フリマ説明文テンプレ生成ツール</a></li>
+          <li><a href="/privacy/">プライバシーポリシー</a></li>
+          <li><a href="/contact/">お問い合わせ</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      © ぱんだツール工房
+    </footer>
+  </div>
+
+  <script>
+    function generateMemo() {
+      const title = document.getElementById("title").value || "ランダムグッズ";
+      const offer = document.getElementById("offer").value || "未入力";
+      const want = document.getElementById("want").value || "未入力";
+      const method = document.getElementById("method").value;
+      const condition = document.getElementById("condition").value;
+      const note = document.getElementById("note").value;
+
+      let text =
+`【交換・譲渡】${title}
+
+譲：
+${offer}
+
+求：
+${want}
+
+${method}
+${condition}`;
+
+      if (note.trim() !== "") {
+        text += `\n\n補足：\n${note}`;
+      }
+
+      text += `\n\nよろしくお願いいたします。`;
+
+      document.getElementById("result").textContent = text;
+    }
+
+    function copyMemo() {
+      const text = document.getElementById("result").textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("コピーしました！");
+      });
+    }
+
+    function resetForm() {
+      document.querySelectorAll("input, textarea, select").forEach(el => {
+        el.value = "";
+      });
+      document.getElementById("method").value = "郵送交換希望です。";
+      document.getElementById("condition").value = "検索からでもお気軽にお声がけください。";
+      document.getElementById("result").textContent = "ここに交換メモが表示されます。";
+    }
+  </script>
+</body>
+</html>
