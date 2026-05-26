@@ -135,16 +135,22 @@
     </footer>
   </div>
 
-  <script>
-    function generateMemo() {
-      const title = document.getElementById("title").value || "ランダムグッズ";
-      const offer = document.getElementById("offer").value || "未入力";
-      const want = document.getElementById("want").value || "未入力";
-      const method = document.getElementById("method").value;
-      const condition = document.getElementById("condition").value;
-      const note = document.getElementById("note").value;
+ <script>
+  const MAX_LENGTH = 140;
 
-      let text =
+  function countChars(text) {
+    return Array.from(text).length;
+  }
+
+  function generateMemo() {
+    const title = document.getElementById("title").value || "ランダムグッズ";
+    const offer = document.getElementById("offer").value || "未入力";
+    const want = document.getElementById("want").value || "未入力";
+    const method = document.getElementById("method").value;
+    const condition = document.getElementById("condition").value;
+    const note = document.getElementById("note").value;
+
+    let text =
 `【交換・譲渡】${title}
 
 譲：
@@ -156,30 +162,57 @@ ${want}
 ${method}
 ${condition}`;
 
-      if (note.trim() !== "") {
-        text += `\n\n補足：\n${note}`;
-      }
-
-      text += `\n\nよろしくお願いいたします。`;
-
-      document.getElementById("result").textContent = text;
+    if (note.trim() !== "") {
+      text += `\n\n補足：\n${note}`;
     }
 
-    function copyMemo() {
-      const text = document.getElementById("result").textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        alert("コピーしました！");
-      });
+    text += `\n\nよろしくお願いいたします。`;
+
+    const length = countChars(text);
+    const resultEl = document.getElementById("result");
+    const countEl = document.getElementById("charCount");
+
+    resultEl.textContent = text;
+
+    if (length > MAX_LENGTH) {
+      countEl.textContent = `文字数：${length} / ${MAX_LENGTH}字　※140字を超えています。内容を短くしてください。`;
+      countEl.className = "char-count error";
+    } else {
+      countEl.textContent = `文字数：${length} / ${MAX_LENGTH}字　OK`;
+      countEl.className = "char-count ok";
+    }
+  }
+
+  function copyMemo() {
+    const text = document.getElementById("result").textContent;
+    const length = countChars(text);
+
+    if (length > MAX_LENGTH) {
+      alert("140字を超えているためコピーできません。内容を短くしてください。");
+      return;
     }
 
-    function resetForm() {
-      document.querySelectorAll("input, textarea, select").forEach(el => {
-        el.value = "";
-      });
-      document.getElementById("method").value = "郵送交換希望です。";
-      document.getElementById("condition").value = "検索からでもお気軽にお声がけください。";
-      document.getElementById("result").textContent = "ここに交換メモが表示されます。";
+    if (text === "ここに交換メモが表示されます。") {
+      alert("先に交換メモを作成してください。");
+      return;
     }
-  </script>
+
+    navigator.clipboard.writeText(text).then(() => {
+      alert("コピーしました！");
+    });
+  }
+
+  function resetForm() {
+    document.querySelectorAll("input, textarea, select").forEach(el => {
+      el.value = "";
+    });
+
+    document.getElementById("method").value = "郵送交換希望です。";
+    document.getElementById("condition").value = "検索からでもお気軽にお声がけください。";
+    document.getElementById("result").textContent = "ここに交換メモが表示されます。";
+    document.getElementById("charCount").textContent = "文字数：0 / 140字";
+    document.getElementById("charCount").className = "char-count";
+  }
+</script>
 </body>
 </html>
