@@ -1,19 +1,73 @@
-<h1>ぱんだツール工房</h1>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<p>
-フリマアプリ・配信活動・日常で使える便利ツールを無料公開しています。
-</p>
+  <title>ぱんだツール工房</title>
+  <meta name="description" content="ぱんだツール工房は、フリマアプリや日常で使える便利ツールを無料公開しているサイトです。" />
 
-<h2>公開中ツール</h2>
+  <link rel="stylesheet" href="/style.css" />
+</head>
 
-<ul>
-  <li><a href="/mercari/">メルカリ計算ツール</a></li>
-</ul>
+<body>
+  <div class="container">
+    <header class="site-header">
+      <h1 class="logo">ぱんだツール工房</h1>
+      <p class="catch">
+        めんどうな計算や確認を、ちょっとラクにするための<br>
+        シンプルで使いやすい便利ツール置き場です。
+      </p>
+    </header>
 
-<h2>このサイトについて</h2>
+    <main>
+      <section class="card">
+        <h2 class="section-title">公開中のツール</h2>
 
-<ul>
-  <li><a href="/about/">運営者情報</a></li>
-  <li><a href="/privacy/">プライバシーポリシー</a></li>
-  <li><a href="/contact/">お問い合わせ</a></li>
-</ul>
+        <div class="tool-list">
+          <a class="tool-card" href="/mercari/">
+            <div class="tool-title">メルカリ利益計算ツール</div>
+            <div class="tool-desc">
+              販売価格・送料・手数料から、手元に残る金額をかんたんに計算できます。
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">ぱんだツール工房について</h2>
+        <p>
+          ぱんだツール工房では、フリマアプリや日常生活で役立つツールを無料で公開しています。
+        </p>
+        <p>
+          「ちょっと面倒」を減らして、スマホでもPCでも使いやすいツールを増やしていく予定です。
+        </p>
+        <a class="button" href="/about/">このサイトについて</a>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">今後追加予定</h2>
+        <ul class="link-list">
+          <li>フリマ送料比較ツール</li>
+          <li>販売価格逆算ツール</li>
+          <li>推し活費用メモツール</li>
+          <li>配信活動向け計算ツール</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">サイト情報</h2>
+        <ul class="link-list">
+          <li><a href="/about/">このサイトについて</a></li>
+          <li><a href="/privacy/">プライバシーポリシー</a></li>
+          <li><a href="/contact/">お問い合わせ</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      © ぱんだツール工房
+    </footer>
+  </div>
+</body>
+</html>
