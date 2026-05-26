@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>フリマ説明文テンプレ生成ツール | ぱんだツール工房</title>
+  <meta name="description" content="フリマアプリの商品説明文をかんたんに作成できる無料テンプレ生成ツールです。" />
+
+  <link rel="stylesheet" href="/style.css" />
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1423860406473731"
+       crossorigin="anonymous"></script>
+
+  <style>
+    .form-label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px;
+      padding: 12px;
+      border: 2px solid #f2d78a;
+      border-radius: 14px;
+      background: #fffdf5;
+      color: #1f2937;
+      outline: none;
+    }
+
+    .form-textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .tool-button {
+      width: 100%;
+      margin-top: 14px;
+      border: none;
+      border-radius: 999px;
+      padding: 14px;
+      background: #f2a900;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .reset-button {
+      background: #888;
+    }
+
+    .result-box {
+      white-space: pre-wrap;
+      background: #fff1b8;
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="site-header">
+      <h1 class="logo">フリマ説明文テンプレ生成ツール</h1>
+      <p class="catch">
+        商品情報を入れるだけで、<br>
+        フリマ出品用の説明文を作れます。
+      </p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2 class="section-title">説明文を作る</h2>
+
+        <label class="form-label" for="itemName">商品名</label>
+        <input class="form-input" id="itemName" placeholder="例：アクリルスタンド、ワンピース、本など" />
+
+        <label class="form-label" for="category">カテゴリ</label>
+        <select class="form-select" id="category">
+          <option value="">選択してください</option>
+          <option value="グッズ">グッズ</option>
+          <option value="衣類">衣類</option>
+          <option value="本・雑誌">本・雑誌</option>
+          <option value="ゲーム・ホビー">ゲーム・ホビー</option>
+          <option value="コスメ・美容">コスメ・美容</option>
+          <option value="その他">その他</option>
+        </select>
+
+        <label class="form-label" for="condition">商品の状態</label>
+        <select class="form-select" id="condition">
+          <option value="">選択してください</option>
+          <option value="新品・未使用">新品・未使用</option>
+          <option value="未使用に近い">未使用に近い</option>
+          <option value="目立った傷や汚れなし">目立った傷や汚れなし</option>
+          <option value="やや傷や汚れあり">やや傷や汚れあり</option>
+          <option value="傷や汚れあり">傷や汚れあり</option>
+        </select>
+
+        <label class="form-label" for="useCount">使用回数・保管状況</label>
+        <input class="form-input" id="useCount" placeholder="例：暗所で保管、数回使用、開封後すぐ袋に入れて保管" />
+
+        <label class="form-label" for="damage">傷・汚れ・注意点</label>
+        <textarea class="form-textarea" id="damage" placeholder="例：外袋に折れあり、本体に目立つ傷なし"></textarea>
+
+        <label class="form-label" for="shipping">発送方法</label>
+        <input class="form-input" id="shipping" placeholder="例：匿名配送、普通郵便、ゆうパケットポスト" />
+
+        <label class="form-label" for="packing">梱包方法</label>
+        <input class="form-input" id="packing" placeholder="例：OPP袋＋プチプチ＋封筒" />
+
+        <label class="form-label" for="discount">値下げ対応</label>
+        <select class="form-select" id="discount">
+          <option value="値下げ交渉はご遠慮ください。">値下げ不可</option>
+          <option value="多少のお値下げは検討いたします。">多少なら可</option>
+          <option value="まとめ買いの場合のみお値下げ可能です。">まとめ買いのみ可</option>
+        </select>
+
+        <button class="tool-button" onclick="generateText()">説明文を作成</button>
+        <button class="tool-button reset-button" onclick="resetForm()">リセット</button>
+
+        <div class="result-box" id="result">ここに説明文が表示されます。</div>
+
+        <button class="tool-button" onclick="copyText()">説明文をコピーする</button>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">サイト情報</h2>
+        <ul class="link-list">
+          <li><a href="/">トップページ</a></li>
+          <li><a href="/mercari/">メルカリ利益計算ツール</a></li>
+          <li><a href="/mbti/">MBTI → トモコレ性格変換ツール</a></li>
+          <li><a href="/privacy/">プライバシーポリシー</a></li>
+          <li><a href="/contact/">お問い合わせ</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      © ぱんだツール工房
+    </footer>
+  </div>
+
+  <script>
+    function generateText() {
+      const itemName = document.getElementById("itemName").value || "商品";
+      const category = document.getElementById("category").value || "商品";
+      const condition = document.getElementById("condition").value || "状態未選択";
+      const useCount = document.getElementById("useCount").value || "自宅保管していました。";
+      const damage = document.getElementById("damage").value || "目立つ傷や汚れはありませんが、一度人の手に渡ったものですので、気になる方は購入をお控えください。";
+      const shipping = document.getElementById("shipping").value || "発送方法は未定です。";
+      const packing = document.getElementById("packing").value || "水濡れ対策をして発送いたします。";
+      const discount = document.getElementById("discount").value;
+
+      const text =
+`ご覧いただきありがとうございます。
+
+【商品について】
+${itemName}の出品です。
+カテゴリ：${category}
+状態：${condition}
+
+【使用・保管状況】
+${useCount}
+
+【傷・汚れ・注意点】
+${damage}
+
+【梱包・発送について】
+梱包方法：${packing}
+発送方法：${shipping}
+
+【その他】
+${discount}
+即購入OKです。
+
+ご不明点がありましたら、購入前にコメントをお願いいたします。`;
+
+      document.getElementById("result").textContent = text;
+    }
+
+    function copyText() {
+      const text = document.getElementById("result").textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("コピーしました！");
+      });
+    }
+
+    function resetForm() {
+      document.querySelectorAll("input, textarea, select").forEach(el => {
+        el.value = "";
+      });
+      document.getElementById("discount").value = "値下げ交渉はご遠慮ください。";
+      document.getElementById("result").textContent = "ここに説明文が表示されます。";
+    }
+  </script>
+</body>
+</html>
