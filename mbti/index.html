@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>MBTI → トモコレ性格変換ツール | ぱんだツール工房</title>
+
+  <meta name="description" content="MBTIを選ぶだけで、トモコレの性格設定目安を表示できる無料ツールです。" />
+
+  <link rel="stylesheet" href="/style.css" />
+
+  <style>
+    .mbti-wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .lead-center {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .mbti-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .mbti-btn {
+      border: 2px solid #f2d78a;
+      background: #fffdf5;
+      border-radius: 16px;
+      padding: 14px 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: 0.15s;
+    }
+
+    .mbti-btn:hover {
+      background: #fff3bf;
+      transform: translateY(-2px);
+    }
+
+    .mbti-btn.active {
+      background: #f2a900;
+      border-color: #f2a900;
+      color: #ffffff;
+      transform: scale(0.98);
+    }
+
+    .mbti-code {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .mbti-jp {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .mbti-result-mini {
+      font-size: 11px;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    .result {
+      display: none;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 2px dashed #f2d78a;
+    }
+
+    .type-name {
+      font-size: 32px;
+      font-weight: 900;
+      text-align: center;
+      color: #f2a900;
+      margin-bottom: 8px;
+    }
+
+    .mbti {
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+
+    .description {
+      background: #fff1b8;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+
+    .param {
+      margin-bottom: 22px;
+    }
+
+    .param-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .blocks {
+      font-size: 21px;
+      letter-spacing: 2px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .copy-button {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      background: #f2a900;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 900;
+      padding: 14px;
+      cursor: pointer;
+      transition: 0.15s;
+      margin-top: 12px;
+    }
+
+    .copy-button:hover {
+      opacity: 0.92;
+    }
+
+    .copy-button:active {
+      transform: scale(0.98);
+    }
+
+    .note-center {
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+      line-height: 1.7;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 480px) {
+      .mbti-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .type-name {
+        font-size: 28px;
+      }
+
+      .blocks {
+        font-size: 18px;
+        letter-spacing: 1px;
+      }
+
+      .param-label {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="site-header">
+      <h1 class="logo">MBTI → トモコレ性格変換ツール</h1>
+
+      <p class="catch">
+        MBTIを選ぶだけで、<br>
+        トモコレの性格設定目安を表示できます。
+      </p>
+    </header>
+
+    <main class="mbti-wrapper">
+      <section class="card">
+        <h2 class="section-title">MBTIを選択</h2>
+
+        <p class="lead-center">
+          あなたのMBTIに近いタイプを選択してください。
+        </p>
+
+        <div id="mbtiButtons"></div>
+
+        <div class="result" id="resultArea">
+          <div class="type-name" id="typeName"></div>
+
+          <div class="mbti" id="mbtiText"></div>
+
+          <div class="description" id="description"></div>
+
+          <div id="params"></div>
+
+          <button class="copy-button" onclick="copyResult()">
+            結果をコピーする
+          </button>
+        </div>
+
+        <p class="note-center">
+          ※表示は「左から何番目のマスにチェックを入れるか」を表しています。
+        </p>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">このツールについて</h2>
+
+        <p>
+          MBTIタイプをもとに、トモコレの性格設定目安を表示する非公式ファンツールです。
+        </p>
+
+        <p>
+          性格設定を考える時の参考用としてお使いください。
+        </p>
+
+        <p class="note">
+          ※診断結果や性格分類を保証するものではありません。
+        </p>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">サイト情報</h2>
+
+        <ul class="link-list">
+          <li><a href="/">トップページ</a></li>
+          <li><a href="/mercari/">メルカリ利益計算ツール</a></li>
+          <li><a href="/about/">このサイトについて</a></li>
+          <li><a href="/privacy/">プライバシーポリシー</a></li>
+          <li><a href="/contact/">お問い合わせ</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      © ぱんだツール工房
+    </footer>
+  </div>
+
+  <script>
+    const groups = [
+      {
+        title: "分析家タイプ",
+        types: ["INTJ", "INTP", "ENTJ", "ENTP"]
+      },
+      {
+        title: "外交官タイプ",
+        types: ["INFJ", "INFP", "ENFJ", "ENFP"]
+      },
+      {
+        title: "番人タイプ",
+        types: ["ISTJ", "ISFJ", "ESTJ", "ESFJ"]
+      },
+      {
+        title: "探検家タイプ",
+        types: ["ISTP", "ISFP", "ESTP", "ESFP"]
+      }
+    ];
+
+    const data = {
+      INTJ: {
+        jp: "建築家",
+        name: "じっくり型",
+        group: "クール系",
+        desc: "落ち着いて考えるタイプ。冷静で知的なMiiに向いています。",
+        params: { "行動": 4, "ことば": 4, "表情": 1, "考え方": 1 }
+      },
+      INTP: {
+        jp: "論理学者",
+        name: "し〜ん型",
+        group: "クール系",
+        desc: "静かで独自の考えを持つタイプ。個性的なMiiに向いています。",
+        params: { "行動": 1, "ことば": 1, "表情": 1, "考え方": 1 }
+      },
+      ENTJ: {
+        jp: "指揮官",
+        name: "バリバリ型",
+        group: "ドライ系",
+        desc: "行動力があり、リーダー気質のMiiに向いています。",
+        params: { "行動": 7, "ことば": 7, "表情": 7, "考え方": 2 }
+      },
+      ENTP: {
+        jp: "討論者",
+        name: "バッサリ型",
+        group: "ドライ系",
+        desc: "頭の回転が速く、はっきりしたMiiに向いています。",
+        params: { "行動": 8, "ことば": 8, "表情": 1, "考え方": 1 }
+      },
+
+      INFJ: {
+        jp: "提唱者",
+        name: "もじもじ型",
+        group: "クール系",
+        desc: "控えめで慎重。静かだけど芯のあるMiiに向いています。",
+        params: { "行動": 1, "ことば": 1, "表情": 4, "考え方": 4 }
+      },
+      INFP: {
+        jp: "仲介者",
+        name: "ふわふわ型",
+        group: "ナゴミ系",
+        desc: "やさしくてマイペース。感受性が強く、ゆったりした雰囲気のMiiに向いています。",
+        params: { "行動": 2, "ことば": 1, "表情": 6, "考え方": 7 }
+      },
+      ENFJ: {
+        jp: "主人公",
+        name: "キラキラ型",
+        group: "ノリ系",
+        desc: "人当たりがよく、みんなを引っ張るタイプのMiiに向いています。",
+        params: { "行動": 5, "ことば": 6, "表情": 7, "考え方": 6 }
+      },
+      ENFP: {
+        jp: "運動家",
+        name: "メラメラ型",
+        group: "ノリ系",
+        desc: "明るく前向きで、勢いのあるMiiに向いています。",
+        params: { "行動": 7, "ことば": 7, "表情": 5, "考え方": 5 }
+      },
+
+      ISTJ: {
+        jp: "管理者",
+        name: "きっちり型",
+        group: "クール系",
+        desc: "まじめで几帳面。安定感のあるMiiに向いています。",
+        params: { "行動": 4, "ことば": 4, "表情": 4, "考え方": 4 }
+      },
+      ISFJ: {
+        jp: "擁護者",
+        name: "ほんわか型",
+        group: "ナゴミ系",
+        desc: "穏やかで面倒見がいいタイプのMiiに向いています。",
+        params: { "行動": 1, "ことば": 2, "表情": 4, "考え方": 6 }
+      },
+      ESTJ: {
+        jp: "幹部",
+        name: "テキパキ型",
+        group: "ドライ系",
+        desc: "しっかり者で効率重視のMiiに向いています。",
+        params: { "行動": 3, "ことば": 7, "表情": 6, "考え方": 3 }
+      },
+      ESFJ: {
+        jp: "領事",
+        name: "にこにこ型",
+        group: "ナゴミ系",
+        desc: "親しみやすく、場を明るくするタイプのMiiに向いています。",
+        params: { "行動": 8, "ことば": 1, "表情": 8, "考え方": 8 }
+      },
+
+      ISTP: {
+        jp: "巨匠",
+        name: "サバサバ型",
+        group: "ドライ系",
+        desc: "さっぱりしていてマイペース。クールなMiiに向いています。",
+        params: { "行動": 5, "ことば": 7, "表情": 1, "考え方": 1 }
+      },
+      ISFP: {
+        jp: "冒険家",
+        name: "まったり型",
+        group: "ナゴミ系",
+        desc: "自然体で自由。ゆるくてかわいいMiiに向いています。",
+        params: { "行動": 4, "ことば": 4, "表情": 4, "考え方": 5 }
+      },
+      ESTP: {
+        jp: "起業家",
+        name: "ガンガン型",
+        group: "ノリ系",
+        desc: "勢いがあり、行動派のMiiに向いています。",
+        params: { "行動": 8, "ことば": 8, "表情": 8, "考え方": 8 }
+      },
+      ESFP: {
+        jp: "エンターテイナー",
+        name: "ワイワイ型",
+        group: "ノリ系",
+        desc: "にぎやかで楽しいことが好きなMiiに向いています。",
+        params: { "行動": 5, "ことば": 5, "表情": 5, "考え方": 5 }
+      }
+    };
+
+    const mbtiButtons = document.getElementById("mbtiButtons");
+    const resultArea = document.getElementById("resultArea");
+    const typeName = document.getElementById("typeName");
+    const mbtiText = document.getElementById("mbtiText");
+    const description = document.getElementById("description");
+    const params = document.getElementById("params");
+
+    let selectedMbti = "";
+
+    function renderButtons() {
+      groups.forEach(group => {
+        const section = document.createElement("div");
+        section.className = "section";
+
+        const title = document.createElement("h2");
+        title.className = "section-title";
+        title.textContent = group.title;
+
+        const grid = document.createElement("div");
+        grid.className = "mbti-grid";
+
+        group.types.forEach(type => {
+          const item = data[type];
+
+          const button = document.createElement("button");
+          button.className = "mbti-btn";
+          button.type = "button";
+          button.dataset.type = type;
+
+          button.innerHTML = `
+            <div class="mbti-code">${type}</div>
+            <div class="mbti-jp">${item.jp}</div>
+            <div class="mbti-result-mini">→ ${item.name}</div>
+          `;
+
+          button.addEventListener("click", () => {
+            selectMbti(type);
+          });
+
+          grid.appendChild(button);
+        });
+
+        section.appendChild(title);
+        section.appendChild(grid);
+        mbtiButtons.appendChild(section);
+      });
+    }
+
+    function selectMbti(type) {
+      selectedMbti = type;
+      const item = data[type];
+
+      document.querySelectorAll(".mbti-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.type === type);
+      });
+
+      typeName.textContent = item.name;
+      mbtiText.textContent = `${type}（${item.jp}）におすすめ / ${item.group}`;
+      description.textContent = item.desc;
+
+      params.innerHTML = "";
+
+      Object.entries(item.params).forEach(([label, value]) => {
+        const div = document.createElement("div");
+        div.className = "param";
+
+        div.innerHTML = `
+          <div class="param-label">
+            <span>${label}</span>
+            <span>左から${value}番目</span>
+          </div>
+          <div class="blocks">${createBlocks(value)}</div>
+        `;
+
+        params.appendChild(div);
+      });
+
+      resultArea.style.display = "block";
+      resultArea.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function createBlocks(value) {
+      let result = "";
+      for (let i = 1; i <= 8; i++) {
+        result += i === value ? "🟨" : "⬜";
+        if (i < 8) result += " ";
+      }
+      return result;
+    }
+
+    function copyResult() {
+      if (!selectedMbti) return;
+
+      const item = data[selectedMbti];
+
+      let text = `${selectedMbti}（${item.jp}） → ${item.name}（${item.group}）\n`;
+      text += `${item.desc}\n\n`;
+
+      Object.entries(item.params).forEach(([label, value]) => {
+        text += `${label}：${createBlocks(value)} 左から${value}番目\n`;
+      });
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("コピーしました！");
+      });
+    }
+
+    renderButtons();
+  </script>
+</body>
+</html>
