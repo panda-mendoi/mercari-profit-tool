@@ -1,33 +1,68 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>このサイトについて | ぱんだツール工房</title>
+  <meta name="description" content="ぱんだツール工房についてのページです。" />
 
-  <meta name="description" content="ぱんだツール工房について">
+  <link rel="stylesheet" href="/style.css" />
 </head>
 
 <body>
+  <div class="container">
+    <header class="site-header">
+      <h1 class="logo">ぱんだツール工房</h1>
+      <p class="catch">
+        めんどうな作業を、ちょっとラクにする便利ツール置き場です。
+      </p>
+    </header>
 
-<h1>このサイトについて</h1>
+    <main>
+      <section class="card">
+        <h2 class="section-title">このサイトについて</h2>
 
-<p>
-ぱんだツール工房は、
-フリマアプリや日常で役立つ便利ツールを無料公開するサイトです。
-</p>
+        <p>
+          ぱんだツール工房は、フリマアプリや日常生活で役立つ便利ツールを無料で公開しているサイトです。
+        </p>
 
-<p>
-「ちょっと面倒をラクにする」をテーマに、
-誰でも簡単に使えるシンプルなツール制作を目指しています。
-</p>
+        <p>
+          「ちょっと面倒」を減らして、スマホでもPCでも使いやすいシンプルなツール作りを目指しています。
+        </p>
 
-<p>
-現在は、
-・メルカリ利益計算ツール
-などを公開しています。
-</p>
+        <p>
+          現在は、メルカリ販売時の利益計算に使えるツールを公開しています。
+          今後も、送料比較・販売価格の逆算・推し活費用管理など、日常で使いやすいツールを追加予定です。
+        </p>
+      </section>
 
+      <section class="card">
+        <h2 class="section-title">公開中のツール</h2>
+
+        <div class="tool-list">
+          <a class="tool-card" href="/mercari/">
+            <div class="tool-title">メルカリ利益計算ツール</div>
+            <div class="tool-desc">
+              販売価格・送料・手数料から、手元に残る金額をかんたんに計算できます。
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">サイト情報</h2>
+        <ul class="link-list">
+          <li><a href="/">トップページ</a></li>
+          <li><a href="/privacy/">プライバシーポリシー</a></li>
+          <li><a href="/contact/">お問い合わせ</a></li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      © ぱんだツール工房
+    </footer>
+  </div>
 </body>
 </html>
